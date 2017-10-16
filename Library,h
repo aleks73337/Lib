@@ -1,0 +1,17 @@
+#ifndef LIBRARY_H
+#define LIBRARY_H
+#include "Autor.h"
+class Library
+{
+protected:
+	std::vector<Autor> autors;
+public:
+	void addBook(Book& book_);
+	void addAutor(std::string name);
+	Autor& searchAutor(std::string n);
+	std::vector<Book> searchBookByYear(std::string year_);
+	void deleteAutor(std::string n);
+	Book searchBookByName(std::string name);
+	void deleteBook(std::string name_);
+};
+#endif LIBRARY_H
