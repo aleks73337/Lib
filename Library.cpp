@@ -11,14 +11,14 @@ void Library::addBook(Book& book_)
 	}
 }
 
-void Library::addAutor(std::string name)
+void Library::addAutor(const std::string& name)
 {
 	Autor autor;
 	autor.setAutName(name);
 	autors.push_back(autor);
 }
 
-Autor& Library::searchAutor(std::string n)
+Autor& Library::searchAutor(const std::string& n)
 {
 	for (Autor& autor : autors)
 	{
@@ -29,7 +29,7 @@ Autor& Library::searchAutor(std::string n)
 	}
 }
 
-std::vector<Book> Library::searchBookByYear(std::string year_)
+std::vector<Book> Library::searchBookByYear(const std::string& year_)
 {
 	std::vector<Book> books;
 	for (Autor& autor : autors)
@@ -45,7 +45,7 @@ std::vector<Book> Library::searchBookByYear(std::string year_)
 	return(books);
 }
 
-void Library::deleteAutor(std::string n)
+void Library::deleteAutor(const std::string& n)
 {
 	std::vector<Autor> del_aut;
 	for (Autor& autor : autors)
@@ -63,7 +63,7 @@ void Library::deleteAutor(std::string n)
 	del_aut.clear();
 }
 
-Book Library::searchBookByName(std::string name)
+Book Library::searchBookByName(const std::string& name)
 {
 	for (Autor& autor : autors)
 	{
@@ -77,7 +77,7 @@ Book Library::searchBookByName(std::string name)
 	}
 }
 
-void Library::deleteBook(std::string name_)
+void Library::deleteBook(const std::string& name_)
 {
 	for (Autor autor : autors)
 	{
