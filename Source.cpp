@@ -1,112 +1,67 @@
+#include <vector>
 #include <iostream>
 #include <string>
-class Fraction
-{
-public:
-	int devisor;
-	int denominator;
-	Fraction(int dev, int den) : devisor(dev), denominator(den){};
-	Fraction(): devisor(0),denominator(0){};
-	Fraction operator=( Fraction &);
-	Fraction operator~();
-	Fraction operator*(Fraction &);
-	Fraction operator/(Fraction );
-	bool operator==(Fraction &);
-	bool operator > (Fraction &);
-	bool operator < (Fraction &);
-};
+#include <cstdlib>
+#include <fstream>
+int k = 0;
 
-std::ostream& operator << (std::ostream &os, const Fraction &frac)
+int hash_func(std::string& str, int tryi)
 {
-	os << frac.devisor << "/" << frac.denominator;
-	return(os);
+	k++;
+	std::hash<std::string> hash_fn;
+	size_t hash = hash_fn(str);
+	int a = (hash*tryi+k) % 2000;
+	return(a);
 }
 
-Fraction Fraction::operator ~ ()
+void addHash(std::string& str, std::string **hash,int tryi)
 {
-	int c = this->devisor;
-	this->devisor = this->denominator;
-	this->denominator = c;
-	return(*this);
-};
-
-Fraction Fraction::operator=(Fraction& frac)
-{
-	if (&frac == this)
+	int numHash = hash_func(str, tryi);
+	if ((*hash)[numHash].empty())
 	{
-		return(*this);
+		(*hash)[numHash]=str;
+		return;
 	}
-	devisor = frac.devisor;
-	denominator = frac.denominator;
-	return(*this);
-};
-
-Fraction Fraction::operator*(Fraction& frac)
-{
-	Fraction c;
-	c.devisor = this->devisor*frac.devisor;
-	c.denominator = this->denominator*frac.denominator;
-	return(c);
-}
-
-Fraction Fraction::operator/(Fraction frac)
-{
-	Fraction c;
-	~frac;
-	c = (*this)*frac;
-	return(c);
-};
-
-bool Fraction::operator==(Fraction& frac)
-{
-	if (&frac == this)
-	{
-		return(true);
-	}
-	if (this->devisor == frac.devisor && this->denominator == frac.denominator) 
-		return(true);
 	else
-		return(false);
-
-}
-
-bool Fraction::operator> (Fraction& frac)
-{
-	if (&frac == this)
 	{
-		return(false);
+		addHash(str, hash, tryi+=1);
 	}
-	if (this->devisor / this->denominator > frac.devisor / frac.denominator)
-		return(true);
-	else
-		return(false);
 }
 
-bool Fraction::operator<(Fraction& frac)
+std::string findWord(std::string str, std::string **hash,int tryi)
 {
-	if (&frac == this)
+	if (tryi == 3000) return("Нет слова");
+	if ((*hash)[hash_func(str,tryi)]==str)
 	{
-		return(false);
+			std::string vect;
+			vect += "Yes ";
+			return(vect);
 	}
-	if (this->devisor / this->denominator < frac.devisor / frac.denominator)
-		return(true);
 	else
-	return (false);
+	{
+		return findWord(str, hash, tryi +=1);
+	}
 }
+
 void main()
 {
-	Fraction frac(10, 20);
-	std::cout << frac<<std::endl;
-	Fraction frac2;
-	frac2 = frac;
-	~frac2;
-	std::cout << frac2 << std::endl;
-	if (frac == frac2)
-		std::cout << "TRUE"<<std::endl;
-	else
-		std::cout << "FALSE"<<std::endl;
-	Fraction frac3=frac / frac2;
-	std::cout << frac3<<std::endl;
-	frac3 = frac*frac2;
-	std::cout << frac3 << std::endl;
-	std::cin.get();}
+	setlocale(LC_ALL, "rus");
+	std::string *hash = new std::string[2000];
+	char mass[1000];
+	std::string stringMass;
+	std::ifstream fcin("words_alpha.txt");
+	for (int k = 1; k < 1000;k++)
+	{
+		//std::cout << "Print the word: " << std::endl;
+		fcin >> mass;
+		//std::cout << std::string(mass) << std::endl;
+		//stringMass = std::string(mass);
+		addHash(std::string(mass), &hash, 1);
+		//std::cout << "Element has been added" << std::endl;
+	}
+	std::cout << "Кол-во коллизий: "<<k<<std::endl<<"Введите нужное слово: ";
+	std::cin >> stringMass;
+	std::cout << findWord(stringMass, &hash, 1);
+	std::cin.get();
+	delete[] hash;
+}
