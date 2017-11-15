@@ -2,66 +2,59 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
-#include <fstream>
+
 int k = 0;
 
-int hash_func(std::string& str, int tryi)
+int hash_func(const std::string& str)
 {
-	k++;
-	std::hash<std::string> hash_fn;
-	size_t hash = hash_fn(str);
-	int a = (hash*tryi+k) % 2000;
-	return(a);
+	long a = 0;
+	for (int i = 0; i<str.length(); i++)
+	{
+		a += (int)str[i]*i;
+	}
+	a = a % 50;
+	return(a % 50);
 }
 
-void addHash(std::string& str, std::string **hash,int tryi)
+std::string addHash(std::string &str,std::vector<std::string> **hash)
 {
-	int numHash = hash_func(str, tryi);
-	if ((*hash)[numHash].empty())
-	{
-		(*hash)[numHash]=str;
-		return;
-	}
-	else
-	{
-		addHash(str, hash, tryi+=1);
-	}
+	if (!(*hash)[hash_func(str)].empty()){ k++; }
+	(*hash)[hash_func(str)].push_back(str);
+	std::cout << (*hash)[hash_func(str)].size();
+	return(str);
 }
 
-std::string findWord(std::string str, std::string **hash,int tryi)
+std::string findWord(const std::string &str, std::vector<std::string> **hash)
 {
-	if (tryi == 3000) return("Нет слова");
-	if ((*hash)[hash_func(str,tryi)]==str)
+	int i = 0;
+	std::string vect;
+	for (std::string element : (*hash)[hash_func(str)])
 	{
-			std::string vect;
-			vect += "Yes ";
-			return(vect);
+		i++;
+		if (element == str)
+		{
+			
+			vect = std::to_string(i);
+			vect += " Yes ";
+			
+		}
 	}
-	else
-	{
-		return findWord(str, hash, tryi +=1);
-	}
+	return(vect);
 }
 
 void main()
 {
-	setlocale(LC_ALL, "rus");
-	std::string *hash = new std::string[2000];
-	char mass[1000];
-	std::string stringMass;
-	std::ifstream fcin("words_alpha.txt");
-	for (int k = 1; k < 1000;k++)
+	std::vector<std::string> *hash = new std::vector<std::string>[50];
+	std::string str="asd";
+	while (str != "0")
 	{
-		//std::cout << "Print the word: " << std::endl;
-		fcin >> mass;
-		//std::cout << std::string(mass) << std::endl;
-		//stringMass = std::string(mass);
-		addHash(std::string(mass), &hash, 1);
-		//std::cout << "Element has been added" << std::endl;
+		std::cout << "Print the word: " << std::endl;
+		std::getline(std::cin, str);
+		str=addHash(str,&hash);
+		std::cout << " element has been added" << std::endl;
 	}
-	std::cout << "Кол-во коллизий: "<<k<<std::endl<<"Введите нужное слово: ";
-	std::cin >> stringMass;
-	std::cout << findWord(stringMass, &hash, 1);
+	std::cout << "Number of cozziliy="<<k<<std::endl;
+	std::cout << findWord("123", &hash);
 	std::cin.get();
 	delete[] hash;
 }
